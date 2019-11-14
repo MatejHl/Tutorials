@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>RL_Value_function</Name>
     <RootNamespace>RL_Value_function</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|RL</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Above_fill_Four_in_a_row.py" />
     <Compile Include="Downloaded_Pong.py" />
     <Compile Include="Pong.py" />
     <Compile Include="Pong_play.py" />
@@ -46,6 +48,9 @@
     <Content Include="models\Q_function\Q_fun\events.out.tfevents.1569270309.DESKTOP-9269SDA" />
     <Content Include="models\Q_function\Q_fun\events.out.tfevents.1569270331.DESKTOP-9269SDA" />
     <Content Include="models\Q_function\Q_fun\events.out.tfevents.1569270374.DESKTOP-9269SDA" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|RL" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
