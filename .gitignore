@@ -8,6 +8,7 @@
 *.sln.docstates
 
 models/
+tmp/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
