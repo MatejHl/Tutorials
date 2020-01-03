@@ -36,7 +36,7 @@ with writer.as_default():
         tf.summary.image('original', original, max_outputs=10, step=step)
         tf.summary.image('reconstructed', reconstructed, max_outputs=10, step=step)
 
-# BUG: Try saveing only a checkpoint and in run recreated model with python code and restore only variables.
+# BUG: Try saving only a checkpoint and in run recreated model with python code and restore only variables.
 # tf.saved_model.save(autoencoder, os.path.join("tmp","models","1"))
 
 backend.clear_session()

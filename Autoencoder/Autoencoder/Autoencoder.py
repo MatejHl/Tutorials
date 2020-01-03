@@ -52,8 +52,8 @@ class Autoencoder(tf.keras.Model):
       self.decoder = Decoder(intermediate_dim=intermediate_dim, original_dim=original_dim)
     
     def call(self, input_features):
-      code = self.encoder(input_features)
-      reconstructed = self.decoder(code)
+      x_code = self.encoder(input_features)
+      reconstructed = self.decoder(x_code)
       return reconstructed
 
 
