@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>73d9f90d-1088-4cc7-ac16-84a38622bd1a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RL_Value_function.py</StartupFile>
+    <StartupFile>Pong_v2.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,12 @@
     <Compile Include="Downloaded_Pong.py" />
     <Compile Include="Pong.py" />
     <Compile Include="Pong_play.py" />
+    <Compile Include="Pong_v2.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pong_v2_model.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RL_Value_function.py" />
   </ItemGroup>
   <ItemGroup>

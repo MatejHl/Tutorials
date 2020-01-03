@@ -1,0 +1,2 @@
+model_checkpoint_path: "Test_saving"
+all_model_checkpoint_paths: "Test_saving"

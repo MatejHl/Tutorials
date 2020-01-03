@@ -9,6 +9,7 @@
 
 models/
 tmp/
+Q_fun/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
