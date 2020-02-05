@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5e839edd-b2ce-4e6c-9319-e52ac2168511</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>GAN.py</StartupFile>
+    <StartupFile>simple_GAN.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,6 +24,9 @@
   <ItemGroup>
     <Compile Include="GAN.py" />
     <Compile Include="GAN_model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="simple_GAN.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
