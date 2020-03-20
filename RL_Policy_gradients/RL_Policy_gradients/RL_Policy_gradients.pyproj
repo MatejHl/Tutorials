@@ -4,13 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6353a230-ab1d-4fcb-a379-fa4587e2f948</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RL_Policy_gradients.py</StartupFile>
+    <StartupFile>CartPole_v0.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>RL_Policy_gradients</Name>
     <RootNamespace>RL_Policy_gradients</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|RL</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +22,17 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CartPole_v0.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CartPole_v0_model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="REINFORCE.py" />
     <Compile Include="RL_Policy_gradients.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|RL" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
