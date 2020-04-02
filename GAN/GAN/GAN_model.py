@@ -78,6 +78,7 @@ class simple_Generator(tf.keras.Model):
 class Discriminator(tf.keras.Model):
     def __init__(self, img_shape):
         super(Discriminator, self).__init__()
+        self.img_shape = tf.TensorShape(img_shape)
 
         self.reshape_to_dense = tf.keras.layers.Reshape(input_shape = img_shape, 
                                                         target_shape = (tf.math.reduce_prod(img_shape),))
@@ -111,6 +112,8 @@ class Generator(tf.keras.Model):
     """
     def __init__(self, noise_shape, img_shape):
         super(Generator, self).__init__()
+        self.noise_shape = tf.TensorShape(noise_shape)
+        self.img_shape = tf.TensorShape(img_shape)
 
         self.dense_input = tf.keras.layers.Dense(input_shape = (noise_shape, ),
                                                 units = 256,
@@ -140,9 +143,9 @@ class Generator(tf.keras.Model):
         """
         # with tf.name_scope('gen_model'):
         d_in = self.dense_input(input_noise)
-        # b_1 = self.batch_norm_1(d_in)
-        # d_1 = self.dense_1(b_1)
-        b_2 = self.batch_norm_2(d_in)
+        b_1 = self.batch_norm_1(d_in)
+        d_1 = self.dense_1(b_1)
+        b_2 = self.batch_norm_2(d_1)
         d_2 = self.dense_2(b_2)
         b_3 = self.batch_norm_3(d_2)
         d_3 = self.dense_3(b_3)
@@ -188,6 +191,13 @@ def loss_discriminator_GP_0_line(Discriminator_model, batch_original_x, batch_ge
     """
     Binary cross-entropy loss with gradient penalty (GP-0) proposed in ref [1].
 
+    Notes:
+    ------
+    This approach assumes that paths betwwen real datapoints and fake datapoints are line segments. 
+    Thus assuming that all line segments from fake to real datapoint are in support.
+    C = \{\alpha*x + (1-\alpha)*y| x \in supp(p_g), y \in supp(p_r), \alpha \in (0,1)\} \in supp(p_g) \union supp(p_r)
+    -> There is and idea in appendix of the paper how to get other paths 
+
     Reference:
     ----------
     [1] Improving Generalization and Stability of Generative Adversarial Networks
@@ -203,12 +213,12 @@ def loss_discriminator_GP_0_line(Discriminator_model, batch_original_x, batch_ge
         alpha = tf.reshape(tensor = alpha,
                            shape = alpha_shape,
                            name = 'alpha')
-
     interpolates = alpha*batch_original_x + (1-alpha)*batch_gen_x
-
-    with tf.GradientTape as tape:
-        grad = tape.gradients(Discriminator_model(interpolates), Discriminator_model.trainable_variables)
-    print(grad)
+    with tf.GradientTape() as tape:
+        tape.watch(interpolates)
+        disc_value = Discriminator_model(interpolates)
+    grad = tape.gradient(disc_value, interpolates)
+    grad = tf.reshape(grad, shape=(batch_original_x.shape[0], -1))
     grad_sq_norm = tf.math.square(tf.norm(grad, axis=-1))
     GP_0 = tf.math.scalar_mul(lam, tf.reduce_mean(grad_sq_norm), name='Gradient_penalty_0')
     BCE_loss = loss_discriminator_cross_entropy(Discriminator_model, batch_original_x, batch_gen_x)
@@ -240,19 +250,19 @@ def loss_generator_cross_entropy(Generator_model, noise_batch_x, Discriminator_m
 # ----------------------- #
 # -------- Train -------- #
 # ----------------------- #
-def train_discriminator(loss, Discriminator_model, opt, batch_original_x, batch_gen_x):
+def train_discriminator(loss, Discriminator_model, opt, batch_original_x, batch_gen_x, **kwargs):
     # with tf.name_scope("disc_train"):
     with tf.GradientTape() as tape:
-        loss_disc = loss(Discriminator_model, batch_original_x, batch_gen_x)
+        loss_disc = loss(Discriminator_model, batch_original_x, batch_gen_x, **kwargs)
         gradients = tape.gradient(loss_disc, Discriminator_model.trainable_variables)
         gradient_variables = zip(gradients, Discriminator_model.trainable_variables)
         opt.apply_gradients(gradient_variables)
     return loss_disc
 
-def train_generator(loss, Generator_model, opt, noise_batch_x, Discriminator_model):
+def train_generator(loss, Generator_model, opt, noise_batch_x, Discriminator_model, **kwargs):
     # with tf.name_scope("gen_train"):
     with tf.GradientTape() as tape:
-        loss_gen = loss(Generator_model, noise_batch_x, Discriminator_model)
+        loss_gen = loss(Generator_model, noise_batch_x, Discriminator_model, **kwargs)
         gradients = tape.gradient(loss_gen, Generator_model.trainable_variables)
         gradient_variables = zip(gradients, Generator_model.trainable_variables)
         opt.apply_gradients(gradient_variables)

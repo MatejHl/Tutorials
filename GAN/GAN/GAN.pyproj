@@ -26,6 +26,12 @@
     <Compile Include="GAN_model.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GAN_recover_latent_variable.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GAN_results.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="simple_GAN.py">
       <SubType>Code</SubType>
     </Compile>
