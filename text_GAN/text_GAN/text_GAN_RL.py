@@ -95,7 +95,7 @@ def tf_REINFORCE_loop_while_body(i, Generator_model, Discriminator_model, gamma,
 
 @tf.function
 def _train_step():           
-        for _, batch_seq in enumerate(dataset):
+        for batch_seq in dataset:
             trajectories = tf_MC_rollouts(start_seq = begin_char_id, 
                                           num_trajectories = BATCH_SIZE//2, 
                                           Generator_model = generator, 
