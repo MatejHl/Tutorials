@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TF_Interesting_Tutorials", "TF_Interesting_Tutorials\TF_Interesting_Tutorials.pyproj", "{055175FE-8C79-471F-8477-588AF2E916AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{055175FE-8C79-471F-8477-588AF2E916AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055175FE-8C79-471F-8477-588AF2E916AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0A5A47B-9320-4143-A387-E52415B7BCBB}
+	EndGlobalSection
+EndGlobal
