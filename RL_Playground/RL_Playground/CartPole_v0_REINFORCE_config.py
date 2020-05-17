@@ -1,0 +1,5 @@
+# hyperparameters:
+GAMMA = 0.8
+LEARNING_RATE = 0.01
+N_EPOCHS = 100000
+UPDATE_MOD = 100
