@@ -30,6 +30,9 @@
     </Compile>
     <Compile Include="REINFORCE.py" />
     <Compile Include="RL_Policy_gradients.py" />
+    <Compile Include="Vanilla_PG.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|RL" />
