@@ -22,7 +22,28 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Algorithms\Policy_grad\REINFORCE.py">
+    <Compile Include="Agents\_memory.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Algorithms\REINFORCE.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Algorithms\Vanilla_PG.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Algorithms\MCTreeSearch.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Agents\_self_play_funcs.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Agents\AlphaZero.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Agents\HumanUser.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CartPole_v0_REINFORCE_config.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CartPole_v0_REINFORCE_model.py">
@@ -34,7 +55,19 @@
     <Compile Include="CartPole_v0_REINFORCE_train.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Connect4_MCTreeSearch_model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Connect4_MCTreeSearch_play.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Games\Connect4.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Connect4_MCTreeSearch_config.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Connect4_MCTreeSearch_train.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Pong_DQN_model.py">
@@ -50,10 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Games\" />
-    <Folder Include="Algorithms\" />
+    <Folder Include="Agents\" />
     <Folder Include="_model_files\" />
-    <Folder Include="Algorithms\Policy_grad\" />
-    <Folder Include="Algorithms\Value_func\" />
+    <Folder Include="Algorithms\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|RL" />

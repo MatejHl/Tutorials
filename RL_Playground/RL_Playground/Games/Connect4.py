@@ -29,11 +29,15 @@ class Game:
 		return ((next_state, value, done, info))
 
 	def identities(self, state, actionValues):
+		"""
+		Isn't the point of this function to use the fact that 
+		the game is symmetric to have more training data?
+		"""
 		raise Exception('Check where this is needed. ... Well you probably just found it :) .')
 		identities = [(state,actionValues)]
 
 		currentBoard = state.board
-		currentAV = actionValues
+		currentAV = actionValues # This is prob distribution over actions.
 
 		currentBoard = np.array([
 			  currentBoard[6], currentBoard[5],currentBoard[4], currentBoard[3], currentBoard[2], currentBoard[1], currentBoard[0]
@@ -145,6 +149,7 @@ class GameState():
 			]
 		self.playerTurn = playerTurn
 		self.binary = self._binary()
+		self.trinary = self._trinary()
 		self.id = self._convertStateToId()
 		self.allowedActions = self._allowedActions()
 		self.isEndGame = self._checkForEndGame()
@@ -174,6 +179,19 @@ class GameState():
 		position = np.append(currentplayer_position,other_position)
 
 		return (position)
+
+	def _trinary(self):
+		"""
+		Added by MatejHl.
+
+		Representation by (-1, 0, 1)
+		"""
+		position = np.zeros(len(self.board), dtype=np.int)
+		position[self.board==self.playerTurn] = 1
+		position[self.board==-self.playerTurn] = -1
+
+		return (position)
+		
 
 	def _convertStateToId(self):
 		player1_position = np.zeros(len(self.board), dtype=np.int)
@@ -224,7 +242,7 @@ class GameState():
 		done = 0
 
 		if newState.isEndGame:
-			value = newState.value[0]
+			value = newState.value[0] # This is -1
 			done = 1
 
 		return (newState, value, done) 
@@ -232,10 +250,23 @@ class GameState():
 
 
 
-	def render(self, logger):
-		for r in range(6):
-			logger.info([self.pieces[str(x)] for x in self.board[7*r : (7*r + 7)]])
-		logger.info('--------------')
+	def render(self, logger = None):
+		if logger is None:
+			for r in range(6):
+				print([self.pieces[str(x)] for x in self.board[7*r : (7*r + 7)]])
+			print('Allowed actions:')
+			temp = list(range(7))
+			for i in range(7):
+				try:
+					temp[self.allowedActions[i]%7] = self.allowedActions[i]
+				except:
+					continue
+			print(temp)
+			print('--------------')
+		else:
+			for r in range(6):
+				logger.info([self.pieces[str(x)] for x in self.board[7*r : (7*r + 7)]])
+			logger.info('--------------')
 
 
 

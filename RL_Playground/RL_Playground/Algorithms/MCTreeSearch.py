@@ -146,7 +146,7 @@ class MCTreeSearch:
     def moveToLeaf(self):
         """
         forward pass. Starts in root node, goes forward and chooses next 
-        node by the rule. All edges from non leaf nodes are added to tree
+        node by the rule. All edges from non leaf nodes are in the tree.
 
         Parameters:
         -----------
@@ -192,8 +192,8 @@ class MCTreeSearch:
     def evaluateLeaf(self, leaf, terminate_value, done, search_path, get_prediction):
         """
         get prior probabilities of actions and value of leaf.state and
-        add to tree new leaf nodes, that can be reached. Their value and 
-        action distribution is not evaluated.
+        add to tree new leaf nodes, that can be reached. New leaf nodes 
+        values and action distribution is not evaluated.
 
         Parameters:
         -----------
