@@ -55,6 +55,9 @@
     <Compile Include="CartPole_v0_REINFORCE_train.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CoLab\run_in_Google_Colab.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Connect4_MCTreeSearch_model.py">
       <SubType>Code</SubType>
     </Compile>
@@ -84,6 +87,7 @@
   <ItemGroup>
     <Folder Include="Games\" />
     <Folder Include="Agents\" />
+    <Folder Include="CoLab\" />
     <Folder Include="_model_files\" />
     <Folder Include="Algorithms\" />
   </ItemGroup>
