@@ -30,7 +30,7 @@ print ('Length of text: {} characters'.format(len(text)))
 # The unique characters in the file
 vocab = sorted(set(text))
 vocab_size = len(vocab)
-print ('{} unique characters'.format(len(vocab)))
+print ('{} unique characters'.format(vocab_size))
 
 
 # Creating a mapping from unique characters to indices
@@ -40,7 +40,7 @@ idx2char = np.array(vocab)
 text_as_int = np.array([char2idx[c] for c in text])
     
 if __name__ == '__main__':    
-    examples_per_epoch = len(text)//(seq_length+1)
+    # examples_per_epoch = len(text)//(seq_length+1)
     
     # Create training examples / targets
     char_dataset = tf.data.Dataset.from_tensor_slices(text_as_int)
@@ -57,7 +57,8 @@ if __name__ == '__main__':
     
     # One sample:
     for input_example_batch, target_example_batch in dataset.take(1):
-      example_batch_predictions = model(input_example_batch)
+        example_batch_predictions = model(input_example_batch)
+        print(example_batch_predictions)
     
     print(model.summary())
     
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     else:
         print("Initializing model from scratch.")
     
-    @tf.function
+    # @tf.function
     def _train_step(batch_labels, batch_input):
         return train_step(loss, model, opt, batch_labels, batch_input)
     

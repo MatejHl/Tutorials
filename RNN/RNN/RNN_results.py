@@ -27,8 +27,7 @@ def generate_text(model, start_string, num_generate = 1000, temperature = 1.0):
     """
     input_eval = [char2idx[s] for s in start_string]
     input_eval = tf.expand_dims(input_eval, 0)
-    
-    
+
     
 
     text_generated = []
@@ -36,6 +35,7 @@ def generate_text(model, start_string, num_generate = 1000, temperature = 1.0):
     model.reset_states()
     for i in range(num_generate):
         predictions = model(input_eval)
+        print(predictions)
         # remove the batch dimension
         predictions = tf.squeeze(predictions, 0)
     

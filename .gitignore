@@ -7,10 +7,15 @@
 *.userosscache
 *.sln.docstates
 
-models/
+# *[Mm]odels/
+_model_files/
 tmp/
 Q_fun/
-tf_logs/
+*tf_logs/
+DATASETS/
+*data/
+*checkpoints/
+*Natural-Language-Processing-Tutorials-master/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

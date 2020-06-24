@@ -19,8 +19,8 @@ class RNN_model(tf.keras.Model):
                                        activation='tanh', 
                                        recurrent_activation='sigmoid', 
                                        use_bias=True,
-                                       return_sequences=True,
-                                       stateful=True, # Whether to return the last output in the output sequence, or the full sequence.
+                                       return_sequences=True, # Whether to return the last output in the output sequence, or the full sequence.
+                                       stateful=True,
                                        kernel_initializer='glorot_uniform',
                                        recurrent_initializer='glorot_uniform')
         self.dense_out = tf.keras.layers.Dense(units = vocab_size,  # We predict probability distribution over next letter
