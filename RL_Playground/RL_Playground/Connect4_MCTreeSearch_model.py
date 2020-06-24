@@ -12,7 +12,7 @@ class PolicyHead(tf.keras.Model):
                  relu_negative_slope,
                  name = 'PolicyHead'):
         super(PolicyHead, self).__init__(name = name)
-        self.n_actions
+        self.n_actions = n_actions
         self.filter_num = filter_num # 2
         self.kernel_size = kernel_size # (1, 1)
         self.relu_negative_slope = relu_negative_slope # 0.0
@@ -21,7 +21,7 @@ class PolicyHead(tf.keras.Model):
         self.conv = tf.keras.layers.Conv2D(filters = self.filter_num, 
                                               kernel_size = self.kernel_size, 
                                               strides = (1, 1), 
-                                              padding = 'valid', 
+                                              padding = 'same', 
                                               data_format = 'channels_last',
                                               dilation_rate = (1, 1), 
                                               activation = None, 
@@ -89,7 +89,7 @@ class PolicyHead(tf.keras.Model):
 
 
 
-class ValueHead(tf.kears.Model):
+class ValueHead(tf.keras.Model):
     """
     Value output layer type.
     """
@@ -111,7 +111,7 @@ class ValueHead(tf.kears.Model):
         self.conv = tf.keras.layers.Conv2D(filters = self.filter_num, 
                                            kernel_size = self.kernel_size, 
                                            strides = (1, 1), 
-                                           padding = 'valid', 
+                                           padding = 'same', 
                                            data_format = 'channels_last',
                                            dilation_rate = (1, 1), 
                                            activation = None, 
@@ -220,7 +220,7 @@ class ResidualBlock(tf.keras.Model):
         self.in_conv = tf.keras.layers.Conv2D(filters = self.in_filter_num, 
                                               kernel_size = self.in_kernel_size, 
                                               strides = (1, 1), 
-                                              padding = 'valid', 
+                                              padding = 'same', 
                                               data_format = 'channels_last',
                                               dilation_rate = (1, 1), 
                                               activation = None, 
@@ -261,10 +261,10 @@ class ResidualBlock(tf.keras.Model):
                                             threshold = 0,
                                             name = 'in_relu')
 
-        self.out_conv = tf.keras.layers.Conv2D(filters = self.out_filter_size, 
+        self.out_conv = tf.keras.layers.Conv2D(filters = self.out_filter_num, 
                                                kernel_size = self.out_kernel_size, 
                                                strides = (1, 1), 
-                                               padding = 'valid', 
+                                               padding = 'same', 
                                                data_format = 'channels_last',
                                                dilation_rate = (1, 1), 
                                                activation = None, 
@@ -329,7 +329,7 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
     """
     """
     def __init__(self,
-                 input_shape,
+                 board_shape,
                  filter_num,
                  kernel_size,
                  relu_negative_slope,
@@ -349,7 +349,7 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
                  value_out_relu_negative_slope,
                  name = 'Connect4_MCTreeSearch_model'):
         super(Connect4_MCTreeSearch_model, self).__init__(name = name)
-        self.input_shape = input_shape
+        self.board_shape = board_shape
         self.filter_num = filter_num
         self.kernel_size = kernel_size
         self.relu_negative_slope = relu_negative_slope
@@ -368,11 +368,11 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
         self.value_in_dense_units = value_in_dense_units
         self.value_out_relu_negative_slope = value_out_relu_negative_slope
 
-        self.conv = tf.keras.layers.Conv2D(input_shape = self.input_shape,
+        self.conv = tf.keras.layers.Conv2D(input_shape = self.board_shape,
                                            filters = self.filter_num,
                                            kernel_size = self.kernel_size, 
                                            strides = (1, 1), 
-                                           padding = 'valid', 
+                                           padding = 'same', 
                                            data_format = 'channels_last',
                                            dilation_rate = (1, 1), 
                                            activation = None, 
@@ -436,6 +436,7 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
                                     out_relu_negative_slope = self.value_out_relu_negative_slope,
                                     name = 'value')
 
+    @tf.function
     def call(self, input, training = False):
         """
         """
@@ -443,16 +444,16 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
         x = self.batch_normalization(x, training = training)
         x = self.relu(x)
         for residual in self.residual_layers:
-            x = self.residual(x, training = training)
+            x = residual(x, training = training)
         logits = self.policy_head(x, training = training)
         value = self.value_head(x, training = training)
         return value, logits
         
 
-    def convertToModelInput(self, state):
+    def convertToModelInput(self, states):
         """
         This is to transform raw output of state to correct shape and type for model.
         It is used in Agent class.
         """
-        return tf.reshape(state.trinary, shape = self.input_shape, name='convertToModelInput')
+        return tf.cast(tf.stack([tf.reshape(state.trinary, shape = self.board_shape) for state in states]), dtype = tf.float32, name = 'convertToModelInput')
         

@@ -1,7 +1,7 @@
 import random
 # playMatches
 
-def playMatches(player1, player2, episodes, goes_first, env, memory = None):
+def playMatches(player1, player2, episodes, goes_first, env, memory = None, tau = 1.0, render = False):
     """
     Returns:
     --------
@@ -36,7 +36,8 @@ def playMatches(player1, player2, episodes, goes_first, env, memory = None):
             players = {1 : player2,
                       -1 : player1}
 
-        env.gameState.render()
+        if render:
+            env.gameState.render()
 
         while not done:
             turn = turn + 1
@@ -48,7 +49,8 @@ def playMatches(player1, player2, episodes, goes_first, env, memory = None):
 
             state, value, done, _ = env.step(action) # value here is immediate reward
 
-            env.gameState.render()
+            if render:
+                env.gameState.render()
             
         if done == 1:
             if memory is not None:

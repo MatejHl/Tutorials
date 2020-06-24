@@ -48,13 +48,13 @@ class Edge:
     playerTurn : int
         id of the player that took the action. inNode playerTurn.
 
-    attrs : dict
+    stats : dict
         attributes of the edges. These are [N, W, Q, p], where
             N - is number of paths passing through edge
             W - is total value. It is used for convinience in order to not have to save value for every node.
             Q - action-value fanction value. It is given as W / N
             p - action probability (prior probability of action calculated when inNodde was visited)
-        So when initializing edge, the attrs are N = 0, W = 0, Q = 0, p = pi(a|s), where pi is policy (model)
+        So when initializing edge, the stats are N = 0, W = 0, Q = 0, p = pi(a|s), where pi is policy (model)
     """
     def __init__(self, inNode, outNode, action, action_prior):
         self.id = inNode.id + '|' + outNode.id
@@ -62,7 +62,7 @@ class Edge:
         self.outNode = outNode
         self.action = action
         self.playerTurn = self.inNode.state.playerTurn
-        self.attrs = {'N': 0,
+        self.stats = {'N': 0,
                       'W': 0,
                       'Q': 0,
                       'p': action_prior}
@@ -276,7 +276,7 @@ class MCTreeSearch:
 
         for edge in search_path:
 
-            if edge.playerTrun == currentPlayer:
+            if edge.playerTurn == currentPlayer:
                 direction = 1.0
             else:
                 direction = -1.0
@@ -325,7 +325,7 @@ class MCTreeSearch:
         [4] https://medium.com/applied-data-science/how-to-build-your-own-alphazero-ai-using-python-and-keras-7f664945c188
         """
         maxUCB = -9999
-        N_currNode = sum((edge.stats['N'] for edge in currentNode.edges.values())) # parent.visit_count in [3]
+        N_currNode = sum((edge.stats['N'] for edge in currentNode.edges)) # parent.visit_count in [3]
         if currentNode == self.root:
             # eps can decrease with increasing N_currNode because we already explored space.
             nu = np.random.dirichlet([self.alpha]*len(currentNode.edges))

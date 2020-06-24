@@ -7,21 +7,25 @@ from Algorithms.MCTreeSearch import MCTreeSearch, Node
 class Agent:
     """
     """
-    def __init__(self, name, state_space_size, action_space_size, model, config):
+    def __init__(self, name, state_space_size, action_space_size, model, optimizer, config):
         self.name = name
         self.state_space_size = state_space_size
         self.action_space_size = action_space_size
 
         self.model = model
 
+        self.tau = config.INIT_TAU
+
         self.mcts_n_simulations = config.MCTS_N_SIMULATIONS
         self.batch_size = config.BATCH_SIZE
         self.train_steps = config.TRAIN_STEPS
         self.weight_decay = config.WEIGHT_DECAY
 
-        self.optimizer = config.OPTIMIZER
+        self.optimizer = optimizer
 
         self.config = config
+
+        self.mcts = None
 
     def simulate(self):
         """
@@ -45,7 +49,7 @@ class Agent:
         return None
 
     @tf.function
-    def _get_preds(self, model, input):
+    def _get_preds(self, model, input, idx_to_keep):
         """
         run model to get value of current leaf node and 
         distribution for action to take from this leaf node.
@@ -54,12 +58,13 @@ class Agent:
         possible states are not calculated.
         """
         value, logits = model(input) #.__call__(input)
+        logits = tf.squeeze(logits)
 
         # Set logits for not allowed actions to -100
-        to_keep = tf.gather(logits, state.allowedActions)
-        idx_to_keep = tf.convert_to_tensor(state.allowedActions, dtype = tf.int64)
+        
+        to_keep = tf.gather(logits, idx_to_keep, axis = -1)
         idx_to_keep = tf.expand_dims(idx_to_keep, -1)
-        sp_logits = tf.sparse.SparseTensor(idx_to_keep, to_keep, tf.shape(logits))
+        sp_logits = tf.sparse.SparseTensor(idx_to_keep, to_keep, tf.shape(logits, out_type=tf.int64))
         logits = tf.sparse.to_dense(sp_logits, default_value = -100.0)
 
         probs = tf.nn.softmax(logits, name='softmax')
@@ -70,13 +75,14 @@ class Agent:
     def get_preds(self, state):
         """
         """
-        input = [self.model.convertToModelInput(state)]
-        value, probs = self._get_preds(self.model, input)
+        input = self.model.convertToModelInput([state])
+        idx_to_keep = tf.convert_to_tensor(state.allowedActions, dtype = tf.int64)
+        value, probs = self._get_preds(self.model, input, idx_to_keep)
 
         return value.numpy(), probs.numpy()
 
 
-    def chooseAction(self, tau):
+    def chooseAction(self):
         """
         action probability distribution for root 
         node is already influencing visit count.
@@ -90,20 +96,20 @@ class Agent:
 
         for edge in self.mcts.root.edges:
             # In case that action leads to multiple states, N for action is summed.
-            pi[edge.action] = pi[edge.action] + edge.attrs['N'] 
-            action_values[edge.action] = action_values[edge.action] + edge.attrs['Q']
+            pi[edge.action] = pi[edge.action] + edge.stats['N'] 
+            action_values[edge.action] = action_values[edge.action] + edge.stats['Q']
             _n[edge.action] = _n[edge.action] + 1
 
         _n[_n==0] = 1
         action_values = np.divide(action_values, _n) # get mean action_value
 
-        if tau == 0:
+        if self.tau == 0:
             actions = np.argwhere(pi == max(pi))
             pi = np.zeros(self.action_space_size, dtype = np.integer)
             pi[actions] = 1.0/len(actions)
             action = np.random.choice(actions)
         else:
-            pi = np.power(pi, 1.0/tau)
+            pi = np.power(pi, 1.0/self.tau)
             pi = pi/(np.sum(pi))
             action = np.random.choice(np.arange(self.action_space_size), p = pi)
 
@@ -112,7 +118,7 @@ class Agent:
         return action, value, pi
 
 
-    def act(self, state, tau):
+    def act(self, state):
         """
         Returns:
         --------
@@ -128,7 +134,7 @@ class Agent:
         for sim in range(self.mcts_n_simulations):
             self.simulate()
 
-        action, value, pi = self.chooseAction(tau)
+        action, value, pi = self.chooseAction()
         return action, pi
 
     @tf.function
@@ -152,10 +158,13 @@ class Agent:
 
 
     def train(self, longMemory):
+        if self.optimizer is None:
+            raise ValueError('optimizer is None.')
+
         for step in range(self.train_steps):
             batch = random.sample(longMemory, min(self.batch_size, len(longMemory)))
             
-            batch_inputs = np.array([self.model.convertToModelInput(row['state']) for row in batch])
+            batch_inputs = self.model.convertToModelInput([row['state'] for row in batch])
             
             batch_values = np.array([row['value'] for row in batch])
             batch_policy = np.array([row['policy'] for row in batch])

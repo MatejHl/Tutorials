@@ -1,5 +1,7 @@
 # Other names: Above_fill_Four_in_a_row
 
+# In future remake to be subclass of gym.Env
+
 import numpy as np
 import logging
 

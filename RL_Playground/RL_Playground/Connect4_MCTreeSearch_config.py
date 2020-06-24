@@ -5,47 +5,59 @@ class Config:
 	"""
 	"""
 	def __init__(self):
-		### Self-Play
-		CBversion = 'dirichlet'
-		# Params for UCB from [3] (See maxUCB_edge below)
+		### Agent: ----------------------------------------
+		self.INIT_TAU = 1.0
+		self.MCTS_N_SIMULATIONS = 3 # 3
+		self.BATCH_SIZE = 512
+		self.TRAIN_STEPS = 10
+		self.WEIGHT_DECAY = 1.0/2.0
+		# TURNS_UNTIL_TAU0 = 10 # turn on which it starts playing deterministically
+		
+		### Memory: ----------------------------------------
+		self.MEMORY_SIZE = 10 # 30000
+
+		### MCTreeSearch: ----------------------------------------
+		self.UCBversion = 'dirichlet'
+		self.ALPHA = 0.8
+		self.EPS = 0.2
+		# Params for UCB from [3] (See maxUCB_edge in MCTreeSearch) (UCBversion == 'DeepMind')
 		self.PB_C_BASE = 19652
 		self.PB_C_INIT = 1.25
 		
-		# Params for UCB from [4] (See maxUCB_edge below)
-		self.ALPHA = 0.8
-		self.EPS = 0.2
+		# Params for UCB from [4] (See maxUCB_edge in MCTreeSearch) (UCBversion == 'dirichlet')
 		self.C_PUCT = 1.0
 		
-		self.MEMORY_SIZE = 10
+		### Model: ----------------------------------------
+		# {'filters':75, 'kernel_size': (4,4)}
+		self.hparams = {'FILTER_NUM' : 75, # 256
+						'KERNEL_SIZE' : '4__4', # '3__3'
+						'RELU_NEGATIVE_SLOPE' : 0.0,
+						'NUM_RESIDUAL_LAYERS' : 2,
+						'RESIDUAL_IN_FILTER_NUM' : 75, # 256
+						'RESIDUAL_IN_KERNEL_SIZE' : '4__4', # '3__3'
+						'RESIDUAL_IN_RELU_NEGATIVE_SLOPE' : 0.0,
+						'RESIDUAL_OUT_RELU_NEGATIVE_SLOPE' : 0.0,
+						'POLICY_FILTER_NUM' : 2,
+						'POLICY_KERNEL_SIZE' : '1__1',
+						'POLICY_RELU_NEGATIVE_SLOPE' : 0.0,
+						'VALUE_FILTER_NUM' : 1,
+						'VALUE_KERNEL_SIZE' : '1__1',
+						'VALUE_IN_RELU_NEGATIVE_SLOPE' : 0.0,
+						'VALUE_IN_DENSE_UNITS' : 75, # 256
+						'VALUE_OUT_RELU_NEGATIVE_SLOPE' : 0.0}
 
+		### Training: ----------------------------------------
+		self.train_hparams = {'DATE_FILEFORMAT' : '%Y_%m_%d__%H_%M_%S',
+							  'CKPT_FILENAME' : None,
+							  'RESTORE' : False,
+							  'LOGDIR' : os.path.join('_model_files', 'Connect4_MCTreeSearch'),
+							  'N_EPOCHS' : 20,
+							  'N_EPISODES' : 30, # 30
+							  'N_EVAL_EPISODES' : 20, # 20
+							  'EVAL_SCORE_MULTIPLIER' : 1.3 # 1.3
+							  }
 
-		### Model
-		hparams = {'FILTER_NUM' : 256,
-				   'KERNEL_SIZE' : '3__3',
-				   'RELU_NEGATIVE_SLOPE' : 0.0,
-				   'NUM_RESIDUAL_LAYERS' : 2,
-				   'RESIDUAL_IN_FILTER_NUM' : 256,
-				   'RESIDUAL_IN_KERNEL_SIZE' : '3__3',
-				   'RESIDUAL_IN_RELU_NEGATIVE_SLOPE' : 0.0,
-				   'RESIDUAL_OUT_RELU_NEGATIVE_SLOPE' : 0.0,
-				   'POLICY_FILTER_NUM' : 2,
-				   'POLICY_KERNEL_SIZE' : '1__1',
-				   'POLICY_RELU_NEGATIVE_SLOPE' : 0.0,
-				   'VALUE_FILTER_NUM' : 1,
-				   'VALUE_KERNEL_SIZE' : '1__1',
-				   'VALUE_IN_RELU_NEGATIVE_SLOPE' : 0.0,
-				   'VALUE_IN_DENSE_UNITS' : 256,
-				   'VALUE_OUT_RELU_NEGATIVE_SLOPE' : 0.0}
-
-
-
-
-
-
-		### Training
-		
-		
-		### Self-Play
+		### Self-Play:   FROM [3] (DeepMind)
 		# self.num_actors = 5000
 		# 
 		# self.num_sampling_moves = 30
@@ -75,38 +87,6 @@ class Config:
 		#     300e3: 2e-3,
 		#     500e3: 2e-4
 		# }
-
-
-        #### SELF PLAY
-		EPISODES = 30
-		MCTS_SIMS = 3
-		MEMORY_SIZE = 30000
-		TURNS_UNTIL_TAU0 = 10 # turn on which it starts playing deterministically
-		CPUCT = 1
-		EPSILON = 0.2
-		ALPHA = 0.8
-		
-		
-		#### RETRAINING
-		BATCH_SIZE = 256
-		EPOCHS = 1
-		REG_CONST = 0.0001
-		LEARNING_RATE = 0.1
-		MOMENTUM = 0.9
-		TRAINING_LOOPS = 10
-		
-		HIDDEN_CNN_LAYERS = [
-			{'filters':75, 'kernel_size': (4,4)}
-			 , {'filters':75, 'kernel_size': (4,4)}
-			 , {'filters':75, 'kernel_size': (4,4)}
-			 , {'filters':75, 'kernel_size': (4,4)}
-			 , {'filters':75, 'kernel_size': (4,4)}
-			 , {'filters':75, 'kernel_size': (4,4)}
-			]
-		
-		#### EVALUATION
-		EVAL_EPISODES = 20
-		SCORING_THRESHOLD = 1.3
 
 
 	def save(self, dir):
