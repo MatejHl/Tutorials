@@ -124,7 +124,7 @@ if __name__ == '__main__':
     eps = 0.1 # 1/eps in theory, esp-greedy policy
     eps_decay = 1.0/3.0
     eps_decay_freq = 2000
-    Q_fun_model_path = os.path.join('models', 'Q_function', 'Q_fun') # F"/content/gdrive/My Drive/Colab Notebooks/Pong/models"
+    Q_fun_model_path = os.path.join('_model_files', 'models', 'Q_function', 'Q_fun') # F"/content/gdrive/My Drive/Colab Notebooks/Pong/models"
     # Q_fun_model_path = os.path.join('gdrive','My Drive', 'Colab Notebooks', 'Pong', 'models', 'Q_function', 'Q_fun')
     # print(os.path.abspath(Q_fun_model_path))
     n_epochs=10
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     # ------------------------------
     import datetime
     current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    train_log_dir = os.path.join('models', 'logs', current_time, 'train')
+    train_log_dir = os.path.join('_model_files', 'models', 'logs', current_time, 'train')
     train_summary_writer = tf.summary.create_file_writer(train_log_dir)
     # ------------------------------
     

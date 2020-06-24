@@ -18,7 +18,7 @@ if gpus:
     except RuntimeError as e:
         print(e)
 
-model_path = os.path.join('models_v2', 'Q_fun')
+model_path = os.path.join('_model_files', 'models_v2', 'Q_fun')
 env = gym.make("Pong-v0")
 restore = True
 render = False

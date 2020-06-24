@@ -10,7 +10,7 @@ env = gym.make("Pong-v0")
 observation = env.reset()
 done = False
 frame_window = 4
-Q_fun_model_path = os.path.join('models', 'Q_function', 'Q_fun')
+Q_fun_model_path = os.path.join('_model_files', 'models', 'Q_function', 'Q_fun')
 eps = 0.00
 
 possible_actions, possible_actions_n = get_possible_actions()
