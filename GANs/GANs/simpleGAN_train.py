@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import floor
 import os
+from simpleGAN_model import *
+
+# TRAIN is the same as in GAN_model.py
 from GAN_model import *
 
 # pareto_dist = np.random.pareto(a=2, size=10000)
@@ -40,11 +43,13 @@ opt_gen = tf.optimizers.Adam(learning_rate=learning_rate)
 
 from datetime import datetime
 start_time = datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
-writer = tf.summary.create_file_writer(os.path.join('paret_test', 'tf_logs', start_time))
+logdir = os.path.join('_model_files', 'simpleGAN', 'tf_logs')
+logdir = os.path.join(logdir, start_time)
+writer = tf.summary.create_file_writer(logdir)
 disc_ckpt = tf.train.Checkpoint(step=tf.Variable(1), model=discriminator)
-disc_ckpt_manager = tf.train.CheckpointManager(disc_ckpt, os.path.join('paret_test', 'tf_logs', 'tf_ckpts_disc'), max_to_keep=3)
+disc_ckpt_manager = tf.train.CheckpointManager(disc_ckpt, os.path.join(logdir, 'ckpts_disc'), max_to_keep=3)
 gen_ckpt = tf.train.Checkpoint(step=tf.Variable(1), model=generator)
-gen_ckpt_manager = tf.train.CheckpointManager(gen_ckpt, os.path.join('paret_test', 'tf_logs', 'tf_ckpts_gen'), max_to_keep=3)
+gen_ckpt_manager = tf.train.CheckpointManager(gen_ckpt, os.path.join(logdir, 'ckpts_gen'), max_to_keep=3)
 
 # Restore Discriminator parameters:
 if disc_restore:

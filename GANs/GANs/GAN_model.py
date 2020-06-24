@@ -1,80 +1,5 @@
 import tensorflow as tf
 
-
-# ----------------------------------------
-
-class simple_Discriminator(tf.keras.Model):
-    """
-
-    """
-    def __init__(self):
-        super(simple_Discriminator, self).__init__()
-
-        self.input_dense = tf.keras.layers.Dense(input_shape = (1,),
-                                             units = 5,
-                                              activation = tf.nn.leaky_relu,
-                                              use_bias = False)
-        
-        self.dense_1 = tf.keras.layers.Dense(units = 7,
-                                              activation = tf.nn.leaky_relu,
-                                              use_bias = True)
-
-        self.dense_2 = tf.keras.layers.Dense(units = 4,
-                                              activation = tf.nn.leaky_relu,
-                                              use_bias = True)
-
-        self.dense_output = tf.keras.layers.Dense(units = 1,
-                                              activation = tf.nn.sigmoid,
-                                              use_bias = False)
-
-    @tf.function
-    def call(self, input_features):
-        """
-        """
-        # with tf.name_scope('disc_model'):
-        d_in = self.input_dense(input_features)
-        d_1 = self.dense_1(d_in)
-        d_2 = self.dense_2(d_1)
-        d_out = self.dense_output(d_2)
-        return d_out
-
-
-class simple_Generator(tf.keras.Model):
-    """
-    
-    """
-    def __init__(self, noise_shape):
-        super(simple_Generator, self).__init__()
-        # input in ~ R^5
-        self.dense_input = tf.keras.layers.Dense(input_shape = (noise_shape, ),
-                                                units = 7,
-                                                activation = tf.nn.leaky_relu,
-                                                use_bias = True)
-
-        self.batch_norm_1 = tf.keras.layers.BatchNormalization(momentum = 0.8)
-        self.dense_1 = tf.keras.layers.Dense(units = 4,
-                                            activation = tf.nn.leaky_relu,
-                                            use_bias = True)
-
-        self.dense_output = tf.keras.layers.Dense(units = 1,
-                                            activation = tf.nn.leaky_relu,
-                                            use_bias = True)
-        # Output should be in R
-
-    @tf.function
-    def call(self, input_noise):
-        """
-        """
-        # with tf.name_scope('gen_model'):
-        d_in = self.dense_input(input_noise)
-        b_1 = self.batch_norm_1(d_in)
-        d_1 = self.dense_1(b_1)
-        d_out = self.dense_output(d_1)
-        return d_out
-
-
-# ----------------------------------------
-
 class Discriminator(tf.keras.Model):
     def __init__(self, img_shape):
         super(Discriminator, self).__init__()
@@ -163,6 +88,10 @@ def loss_discriminator_ls(Discriminator_model, batch_original_x, batch_gen_x):
     Leaast squares Disc loss: E_{} (g((f(y))^2 + (g(x)-1)^2)
     x - observed data
     f(y) - generated data
+
+    Notes:
+    ------
+    This is here only for test to see what happens when inproper loss is used.
     """
     # with tf.name_scope("disc_loss"):
     loss_original = tf.reduce_mean(tf.square(tf.subtract(Discriminator_model(batch_original_x), tf.ones(batch_original_x.shape[0]))))
@@ -188,21 +117,21 @@ def loss_discriminator_cross_entropy(Discriminator_model, batch_original_x, batc
 
 @tf.function
 def loss_discriminator_GP_0_line(Discriminator_model, batch_original_x, batch_gen_x, lam, alpha = None):
-    """
+    '''
     Binary cross-entropy loss with gradient penalty (GP-0) proposed in ref [1].
 
     Notes:
     ------
     This approach assumes that paths betwwen real datapoints and fake datapoints are line segments. 
     Thus assuming that all line segments from fake to real datapoint are in support.
-    C = \{\alpha*x + (1-\alpha)*y| x \in supp(p_g), y \in supp(p_r), \alpha \in (0,1)\} \in supp(p_g) \union supp(p_r)
+    C = \{\alpha*x + (1-\alpha)*y| x \in supp(p_g), y \in supp(p_r), \alpha \in (0,1)\} \in supp(p_g) union supp(p_r)
     -> There is and idea in appendix of the paper how to get other paths 
 
     Reference:
     ----------
     [1] Improving Generalization and Stability of Generative Adversarial Networks
         https://arxiv.org/abs/1902.03984
-    """
+    '''
     alpha_shape = (batch_original_x.shape[0], ) + tuple([1 for _ in range(len(batch_original_x.shape)-1)])
     if alpha is None:
         alpha = tf.random.uniform(shape = alpha_shape,
@@ -229,6 +158,10 @@ def loss_discriminator_GP_0_line(Discriminator_model, batch_original_x, batch_ge
 def loss_generator_ls(Generator_model, noise_batch_x, Discriminator_model):
     """
     Leaast squares Generator loss: E_{x\sim N(0,1)} (g(f(x)) - 1)^2
+
+    Notes:
+    ------
+    This is here only for test to see what happens when inproper loss is used.
     """
     # with tf.name_scope("gen_loss"):
     LS_loss = tf.reduce_mean(tf.square(tf.subtract(Discriminator_model(Generator_model(noise_batch_x)), tf.ones(noise_batch_x.shape[0]))))

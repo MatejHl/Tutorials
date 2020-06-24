@@ -15,8 +15,8 @@ from spacy.util import minibatch, compounding
 
 from to_spaCy_format import tsv_to_json_format, to_spaCy_format
 
-tsv_to_json_format("Data/ner_corpus_260.tsv",'Data/ner_corpus_260.json','abc')
-to_spaCy_format(input_file='Data/ner_corpus_260.json', output_file='Data/ner_corpus_260.pkl')
+tsv_to_json_format("/_data_files/Data/ner_corpus_260.tsv",'/_data_files/Data/ner_corpus_260.json','abc')
+to_spaCy_format(input_file='/_data_files/Data/ner_corpus_260.json', output_file='/_data_files/Data/ner_corpus_260.pkl')
 
 # New entity labels
 # Specify the new entity labels which you want to add here
@@ -25,7 +25,7 @@ LABEL = ['I-geo', 'B-geo', 'I-art', 'B-art', 'B-tim', 'B-nat', 'B-eve', 'O', 'I-
 # -------------------------
 model = None
 new_model_name = 'test_model'
-output_dir = 'Trained Models'
+output_dir = '_model_files//Trained Models'
 n_iter = 30
 # -------------------------
 
@@ -40,7 +40,7 @@ eve = Event
 nat = Natural Phenomenon
 """
 # Loading training data 
-with open ('Data/ner_corpus_260.pkl', 'rb') as fp:
+with open ('_data_files/Data/ner_corpus_260.pkl', 'rb') as fp:
     TRAIN_DATA = pickle.load(fp)
     TRAIN_DATA = [data for data in TRAIN_DATA if data[0] != '' ]
 

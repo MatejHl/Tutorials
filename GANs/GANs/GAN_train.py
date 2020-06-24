@@ -1,18 +1,9 @@
-import numpy as np
-from math import floor
 import os
-from GAN_model import *
 from datetime import datetime
+import tensorflow as tf
 
-
-def prepro_dataset(images):
-    """
-    """
-    images = (images - np.mean(images)) / np.std(images)
-    # images = images / np.max(images)
-    images = images.astype('float32')
-    return images
-
+from GAN_model import *
+from utils import prepro_dataset
 
 
 learning_rate = 0.00001
@@ -49,9 +40,11 @@ if __name__ == '__main__':
     opt_disc = tf.optimizers.Adam(learning_rate=learning_rate)
     opt_gen = tf.optimizers.Adam(learning_rate=learning_rate)
     
+    start_time = datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
+    logdir = os.path.join('_model_files', 'GAN', 'tf_logs')
     if disc_restore or gen_restore:
         recent_time = datetime.min
-        for filename in os.listdir("tf_logs"):
+        for filename in os.listdir(logdir):
             try:
                 tim = datetime.strptime(filename, "%Y_%m_%d__%H_%M_%S")
             except:
@@ -61,11 +54,12 @@ if __name__ == '__main__':
         start_time = recent_time.strftime("%Y_%m_%d__%H_%M_%S")
     else:
         start_time = datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
-    writer = tf.summary.create_file_writer(os.path.join('tf_logs', start_time))
+    logdir = os.path.join(logdir, start_time)
+    writer = tf.summary.create_file_writer(logdir)
     disc_ckpt = tf.train.Checkpoint(step=tf.Variable(1), model=discriminator)
-    disc_ckpt_manager = tf.train.CheckpointManager(disc_ckpt, os.path.join('tf_logs', 'tf_ckpts_disc'), max_to_keep=10)
+    disc_ckpt_manager = tf.train.CheckpointManager(disc_ckpt, os.path.join(logdir, 'ckpts_disc'), max_to_keep=10)
     gen_ckpt = tf.train.Checkpoint(step=tf.Variable(1), model=generator)
-    gen_ckpt_manager = tf.train.CheckpointManager(gen_ckpt, os.path.join('tf_logs', 'tf_ckpts_gen'), max_to_keep=10)
+    gen_ckpt_manager = tf.train.CheckpointManager(gen_ckpt, os.path.join(logdir, 'ckpts_gen'), max_to_keep=10)
     
     # Restore Discriminator parameters:
     if disc_restore:
