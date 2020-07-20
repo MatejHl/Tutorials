@@ -1,7 +1,7 @@
 import random
 # playMatches
 
-def playMatches(player1, player2, episodes, goes_first, env, memory = None, tau = 1.0, render = False):
+def playMatches(player1, player2, episodes, goes_first, env, memory = None, render = False):
     """
     Returns:
     --------

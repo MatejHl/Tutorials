@@ -449,11 +449,10 @@ class Connect4_MCTreeSearch_model(tf.keras.Model):
         value = self.value_head(x, training = training)
         return value, logits
         
-
-    def convertToModelInput(self, states):
-        """
-        This is to transform raw output of state to correct shape and type for model.
-        It is used in Agent class.
-        """
-        return tf.cast(tf.stack([tf.reshape(state.trinary, shape = self.board_shape) for state in states]), dtype = tf.float32, name = 'convertToModelInput')
+    # def convertToModelInput(self, states):
+    #     """
+    #     This is to transform raw output of state to correct shape and type for model.
+    #     It is used in Agent class.
+    #     """
+    #     return tf.cast(tf.stack([tf.reshape(state.trinary, shape = self.board_shape) for state in states]), dtype = tf.float32, name = 'convertToModelInput')
         

@@ -31,9 +31,6 @@ def get_ckpt_filename(logdir, date_fileformat, restore = False):
 
 
 
-ckpt_filename = None
-RESTORE = False
-
 if __name__ == '__main__':
     env = Game()
     config = Config()
@@ -120,42 +117,55 @@ if __name__ == '__main__':
     if restore:
         player_ckpt.restore(player_ckpt_manager.latest_checkpoint)
         best_player_ckpt.restore(player_ckpt_manager.latest_checkpoint) # restoring from the same ckpt_manager ! !
-        if ckpt_manager.latest_checkpoint: print("Restored from {}".format(ckpt_manager.latest_checkpoint))
+        if player_ckpt_manager.latest_checkpoint: print("Restored from {}".format(player_ckpt_manager.latest_checkpoint))
     else:
         save_path = player_ckpt_manager.save()
         best_player_ckpt.restore(player_ckpt_manager.latest_checkpoint)
         print("Initializing models from scratch.")
 
     config.save(logdir)
+    if config.train_hparams['LOAD_MEMORY']:
+        memory.load_longMemory(logdir)
 
+    # saved_model_logdir = os.path.join(logdir, 'saved_model')
+    # if not os.path.isdir(saved_model_logdir):
+    #     os.mkdir(saved_model_logdir)
 
-    for epoch in range(config.train_hparams['N_EPOCHS']):
-        print('epoch:  {}'.format(epoch))
-        _, memory, _ =  playMatches(best_player, 
-                                    best_player, 
-                                    episodes = config.train_hparams['N_EPISODES'], 
-                                    goes_first = 0, 
-                                    env = env,
-                                    memory = memory)
-        memory.clear_shortMemory()
+    writer = tf.summary.create_file_writer(logdir) 
 
-        if len(memory.longMemory) > config.MEMORY_SIZE:
-            player.train(memory.longMemory)
+    with writer.as_default():
+        for epoch in range(config.train_hparams['N_EPOCHS']):
+            print('epoch:  {}'.format(epoch))
+            _, memory, _ =  playMatches(best_player, 
+                                        best_player, 
+                                        episodes = config.train_hparams['N_EPISODES'], 
+                                        goes_first = 0, 
+                                        env = env,
+                                        memory = memory)
+            memory.clear_shortMemory()
 
-            # save memory HERE ! ! 
+            if len(memory.longMemory) > config.MEMORY_SIZE:
+                player.train(memory.longMemory, player_ckpt)
 
+                # Save longMemory
+                memory.save_longMemory(logdir)
 
-            # Evaluate which player is better
-            scores, memory, points =  playMatches(player, 
-                                                  best_player, 
-                                                  episodes = config.train_hparams['N_EVAL_EPISODES'], 
-                                                  goes_first = 0, 
-                                                  env = env,
-                                                  memory = None)
-            if scores['player'] > scores['best_player'] * config.train_hparams['EVAL_SCORE_MULTIPLIER']:
-                save_path = player_ckpt_manager.save()
-                best_ckpt.restore(ckpt_manager.latest_checkpoint)
-                player_ckpt.versoin.assign_add(1)
+                # Evaluate which player is better
+                scores, memory, points =  playMatches(player, 
+                                                      best_player, 
+                                                      episodes = config.train_hparams['N_EVAL_EPISODES'], 
+                                                      goes_first = 0, 
+                                                      env = env,
+                                                      memory = None)
+                tf.summary.scalar('player score', scores['player'], step = player_ckpt.epoch)
+                tf.summary.scalar('best player score', scores['best_player'], step = player_ckpt.epoch)
+                if scores['player'] > scores['best_player'] * config.train_hparams['EVAL_SCORE_MULTIPLIER']:
+                    save_path = player_ckpt_manager.save()
+                    best_ckpt.restore(ckpt_manager.latest_checkpoint)
+                    player_ckpt.versoin.assign_add(1)
+            else:
+                print('NIC')
+            player_ckpt.epoch.assign_add(1)
+            writer.flush()
 
-
-    # writer = tf.summary.create_file_writer(logdir) 
+    best_player.model.save(logdir)

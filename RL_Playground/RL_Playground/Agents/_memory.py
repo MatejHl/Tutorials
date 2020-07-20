@@ -1,4 +1,5 @@
 from collections import deque
+import pickle
 
 
 class Memory:
@@ -36,3 +37,13 @@ class Memory:
 
     def clear_shortMemory(self):
         self.shortMemory = deque(maxlen = self.memory_size)
+
+
+    def save_longMemory(self, pklfile):
+        with open(pklfile, 'wb') as file:
+            pickle.dump(self.longMemory, file)
+
+
+    def load_longMemory(self, pklfile):
+        with open(pklfile, 'rb') as file:
+            self.longMemory = pickle.load(file)

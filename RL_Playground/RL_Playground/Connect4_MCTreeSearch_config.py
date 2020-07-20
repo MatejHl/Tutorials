@@ -14,7 +14,7 @@ class Config:
 		# TURNS_UNTIL_TAU0 = 10 # turn on which it starts playing deterministically
 		
 		### Memory: ----------------------------------------
-		self.MEMORY_SIZE = 10 # 30000
+		self.MEMORY_SIZE = 30000
 
 		### MCTreeSearch: ----------------------------------------
 		self.UCBversion = 'dirichlet'
@@ -50,8 +50,9 @@ class Config:
 		self.train_hparams = {'DATE_FILEFORMAT' : '%Y_%m_%d__%H_%M_%S',
 							  'CKPT_FILENAME' : None,
 							  'RESTORE' : False,
+							  'LOAD_MEMORY' : False,
 							  'LOGDIR' : os.path.join('_model_files', 'Connect4_MCTreeSearch'),
-							  'N_EPOCHS' : 20,
+							  'N_EPOCHS' : 2,
 							  'N_EPISODES' : 30, # 30
 							  'N_EVAL_EPISODES' : 20, # 20
 							  'EVAL_SCORE_MULTIPLIER' : 1.3 # 1.3

@@ -75,7 +75,7 @@ class Agent:
     def get_preds(self, state):
         """
         """
-        input = self.model.convertToModelInput([state])
+        input = self.convertToModelInput([state])
         idx_to_keep = tf.convert_to_tensor(state.allowedActions, dtype = tf.int64)
         value, probs = self._get_preds(self.model, input, idx_to_keep)
 
@@ -104,7 +104,7 @@ class Agent:
         action_values = np.divide(action_values, _n) # get mean action_value
 
         if self.tau == 0:
-            actions = np.argwhere(pi == max(pi))
+            actions = np.argwhere(pi == max(pi)).flatten()
             pi = np.zeros(self.action_space_size, dtype = np.integer)
             pi[actions] = 1.0/len(actions)
             action = np.random.choice(actions)
@@ -157,14 +157,14 @@ class Agent:
         return loss_value, loss_policy, loss
 
 
-    def train(self, longMemory):
+    def train(self, longMemory, ckpt):
         if self.optimizer is None:
             raise ValueError('optimizer is None.')
 
         for step in range(self.train_steps):
             batch = random.sample(longMemory, min(self.batch_size, len(longMemory)))
             
-            batch_inputs = self.model.convertToModelInput([row['state'] for row in batch])
+            batch_inputs = self.convertToModelInput([row['state'] for row in batch])
             
             batch_values = np.array([row['value'] for row in batch])
             batch_policy = np.array([row['policy'] for row in batch])
@@ -175,6 +175,11 @@ class Agent:
                                                              batch_policy = batch_policy, 
                                                              opt = self.optimizer, 
                                                              weight_decay = self.weight_decay)
+            tf.summary.scalar('loss_value', loss_value, step = ckpt.step)
+            tf.summary.scalar('loss_policy', loss_policy, step = ckpt.step)
+            tf.summary.scalar('loss', loss, step = ckpt.step)
+            ckpt.step.assign_add(1)
+
         return None
 
     def buildMCTS(self, state):
@@ -187,3 +192,10 @@ class Agent:
     def changeRootMCTS(self, state):
         self.mcts.root = self.mcts.tree[state.id]
         return None
+
+    def convertToModelInput(self, states):
+        """
+        This is to transform raw output of state to correct shape and type for model.
+        It is used in Agent class.
+        """
+        return tf.cast(tf.stack([tf.reshape(state.trinary, shape = self.model.board_shape) for state in states]), dtype = tf.float32, name = 'convertToModelInput')
