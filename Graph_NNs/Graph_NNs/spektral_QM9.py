@@ -1,3 +1,4 @@
+# spektral 0.6.2
 """
 This example shows how to perform regression of molecular properties with the
 QM9 database, using a GNN based on edge-conditioned convolutions in batch mode.

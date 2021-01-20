@@ -108,8 +108,8 @@ def loss_discriminator_cross_entropy(Discriminator_model, batch_original_x, batc
     tf.keras.losses.binary_crossentropy(from_logits = True)
     which uses former under the hood.
     """
-    loss_original = tf.math.reduce_sum(tf.math.log(tf.squeeze(Discriminator_model(batch_original_x, batch_label))))
-    loss_gen = tf.math.reduce_sum(tf.math.log(1-tf.squeeze(Discriminator_model(batch_gen_x, batch_label))))
+    loss_original = tf.math.reduce_mean(tf.math.log(tf.squeeze(Discriminator_model(batch_original_x, batch_label))))
+    loss_gen = tf.math.reduce_mean(tf.math.log(1-tf.squeeze(Discriminator_model(batch_gen_x, batch_label))))
     BCE_loss = - tf.math.add(loss_original, loss_gen, name="disc_loss_cross_entropy")
     # WARNING: See notes above.
     return BCE_loss
@@ -161,7 +161,7 @@ def loss_generator_cross_entropy(Generator_model, noise_batch_x, batch_label, Di
     Note on instability holds here as well.
     """
     batch_gen_x = Generator_model(noise_batch_x, batch_label)
-    BCE_loss = - tf.math.reduce_sum(tf.math.log(tf.squeeze(Discriminator_model(batch_gen_x, batch_label))))
+    BCE_loss = - tf.math.reduce_mean(tf.math.log(tf.squeeze(Discriminator_model(batch_gen_x, batch_label))))
     return BCE_loss
 
 

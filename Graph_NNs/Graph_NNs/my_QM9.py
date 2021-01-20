@@ -1,3 +1,4 @@
+# spektral 0.6.2
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='3' # This supress debugging information so UNcoment when debugging ! ! !
 import tensorflow as tf
@@ -25,10 +26,13 @@ if __name__ == '__main__':
                                                   ef_keys = 'type',
                                                   auto_pad = True, 
                                                   self_loops = True, 
-                                                  amount = 10000,
+                                                  amount = 1000,
                                                   return_type = 'numpy')
       y = y[['cv']].values  # Heat capacity at 298.15K
-      
+
+      print(X.shape)
+
+      raise Exception('aa')
       # Preprocessing
       X_uniq = numpy.unique(X)
       X_uniq = X_uniq[X_uniq != 0]
