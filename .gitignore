@@ -15,6 +15,7 @@ _model_files/
 tmp/
 Q_fun/
 *tf_logs/
+*logs/
 DATASETS/
 *data/
 *checkpoints/
